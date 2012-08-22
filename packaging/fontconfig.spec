@@ -1,9 +1,10 @@
+#sbs-git:slp/pkgs/f/fontconfig fontconfig 2.6.0 70f07428c05d43eef8009f4dfbe28723b040e865
 %global freetype_version 2.1.4
 
 Name:       fontconfig
 Summary:    Font configuration and customization library
-Version:    2.6.0
-Release:    1
+Version:    2.9.0
+Release:    2
 Group:      System/Libraries
 License:    MIT
 URL:        http://fontconfig.org
@@ -48,7 +49,7 @@ export HASDOCBOOK=no
     --with-expat-include=%{_includedir} \
     --with-expat-lib=%{_libdir} \
     --with-freetype-config=%{_bindir}/freetype-config \
-    --with-add-fonts=/opt/share/fonts \
+    --with-add-fonts=/opt/share/fonts,/usr/share/app_fonts,/usr/share/fallback_fonts \
     --with-cache-dir=/var/cache/fontconfig \
     --with-confdir=/usr/etc/fonts \
     --disable-docs
@@ -110,10 +111,7 @@ fi
 %defattr(-, root, root)
 %doc README AUTHORS COPYING
 %{_libdir}/libfontconfig.so.*
-%{_bindir}/fc-cache
-%{_bindir}/fc-cat
-%{_bindir}/fc-list
-%{_bindir}/fc-match
+%{_bindir}/fc-*
 /usr/%{_sysconfdir}/fonts/*
 %dir /usr/%{_sysconfdir}/fonts/conf.avail
 %dir %{_datadir}/fonts
