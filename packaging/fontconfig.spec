@@ -61,6 +61,8 @@ make %{?jobs:-j%jobs}
 make check
 %install
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/license
+cp COPYING %{buildroot}/usr/share/license/%{name}
 
 %make_install
 
@@ -122,6 +124,7 @@ fi
 %config /usr/%{_sysconfdir}/fonts/conf.avail/*.conf
 %config(noreplace) /usr/%{_sysconfdir}/fonts/conf.d/*.conf
 %dir /var/cache/fontconfig
+/usr/share/license/%{name}
 
 %files devel
 %defattr(-,root,root,-)
