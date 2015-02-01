@@ -141,3 +141,4 @@ fi
 %{_libdir}/libfontconfig.so
 %{_libdir}/pkgconfig/*
 %{_includedir}/fontconfig
+
