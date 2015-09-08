@@ -4,14 +4,16 @@
 Name:       fontconfig
 Summary:    Font configuration and customization library
 Version:    2.9.0
-Release:    2
+Release:    8
 Group:      System/Libraries
 License:    MIT
 URL:        http://fontconfig.org
 Source0:    http://fontconfig.org/release/fontconfig-%{version}.tar.gz
+Source1001: packaging/fontconfig.manifest
 Requires(pre): /usr/bin/fc-cache, /bin/mkdir /bin/rm, /bin/grep
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
+Requires:    smack-utils
 BuildRequires:  pkgconfig(freetype2) >= %{freetype_version}
 BuildRequires:  gawk
 BuildRequires:  expat-devel
@@ -41,6 +43,7 @@ will use fontconfig.
 %setup -q -n %{name}-%{version}
 
 %build
+cp %{SOURCE1001} .
 # We don't want to rebuild the docs, but we want to install the included ones.
 export HASDOCBOOK=no
 
@@ -78,6 +81,8 @@ rm -rf %{buildroot}
 # All font packages depend on this package, so we create
 # and own /usr/share/fonts
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/fonts
+mkdir -p %{buildroot}/usr/share/license
+cat COPYING > %{buildroot}/usr/share/license/%{name}
 
 # Remove unpackaged files. no need when configure --disable-static
 #rm $RPM_BUILD_ROOT%{_libdir}/*.la
@@ -92,6 +97,13 @@ mkdir -p /var/cache/fontconfig
 # Remove stale caches
 rm -f /var/cache/fontconfig/????????????????????????????????.cache-2
 rm -f /var/cache/fontconfig/stamp
+mkdir -p /opt/var/cache/fontconfig
+mkdir -p /usr/share/fonts
+mkdir -p /usr/share/fallback_fonts
+mkdir -p /usr/share/app_fonts
+chsmack -t /opt/var/cache/fontconfig
+chsmack -a "system::homedir" /opt/var/cache/fontconfig/*
+chsmack -a "system::homedir" /opt/var/cache/fontconfig
 
 # remove 49-sansserif.conf to fix bmc #9024
 #rm -rf /usr/%{_sysconfdir}/fonts/conf.d/49-sansserif.conf
@@ -107,6 +119,7 @@ fi
 %postun -p /sbin/ldconfig
 
 %files
+%manifest fontconfig.manifest
 %defattr(-,root,root,-)
 %defattr(-, root, root)
 %doc README AUTHORS COPYING
@@ -119,8 +132,10 @@ fi
 %config /usr/%{_sysconfdir}/fonts/conf.avail/*.conf
 %config(noreplace) /usr/%{_sysconfdir}/fonts/conf.d/*.conf
 %dir /var/cache/fontconfig
+/usr/share/license/%{name}
 
 %files devel
+%manifest fontconfig.manifest
 %defattr(-,root,root,-)
 %defattr(-, root, root)
 %{_libdir}/libfontconfig.so
